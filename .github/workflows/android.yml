@@ -27,7 +27,6 @@ jobs:
       uses: android-actions/setup-android@v3
 
     # ၄။ ပရောဂျက်အတွက် လိုအပ်တဲ့ Android SDK Platform ကို install လုပ်ခြင်း
-    # (မှတ်ချက် - မင်းရဲ့ project properties အလိုက် target version ကို ပြောင်းလဲနိုင်ပါတယ်)
     - name: Install Android Platform Component
       run: |
         sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
@@ -36,12 +35,7 @@ jobs:
     - name: Setup Ant
       run: sudo apt-get update && sudo apt-get install -y ant
 
-    # ၆။ မရှိသေးတဲ့ build.xml ကို အလိုအလျောက် Generate ပြုလုပ်ခြင်း
-    - name: Generate build.xml
-      run: |
-        $ANDROID_HOME/tools/android update project --path . --target android-33
-
-    # ၇။ Ant compile ကို run ခြင်း
+    # ၆။ Ant compile ကို run ခြင်း (အဆင့် ၁ က ထည့်ထားတဲ့ build.xml ကို သုံးသွားမှာပါ)
     - name: Run ant compile
       run: ant compile
       env:
