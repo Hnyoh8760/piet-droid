@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="piet-droid" default="help">
+<project name="piet-droid" default="compile">
 
     <property file="local.properties" />
     <property environment="env" />
@@ -8,27 +8,51 @@
     </condition>
 
     <property name="target" value="android-33" />
+    <property name="target.sdk" value="33" />
     <property name="source.dir" value="src" />
     <property name="out.dir" value="bin" />
-    <property name="classes.dir" value="${out.dir}" />
+    <property name="gen.dir" value="gen" />
+    <property name="classes.dir" value="${out.dir}/classes" />
+    <property name="asset.dir" value="assets" />
+    <property name="res.dir" value="res" />
 
-    <target name="compile">
+    <path id="project.classpath">
+        <pathelement location="${sdk.dir}/platforms/${target}/android.jar" />
+        <fileset dir="libs">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="init">
+        <mkdir dir="${gen.dir}" />
         <mkdir dir="${classes.dir}" />
-        <javac srcdir="${source.dir}" destdir="${classes.dir}" includeantruntime="false">
-            <classpath>
-                <pathelement location="${sdk.dir}/platforms/${target}/android.jar"/>
-                
-                <fileset dir="libs">
-                    <include name="*.jar" />
-                </fileset>
-            </classpath>
+        
+        <echo>Generating R.java from resources...</echo>
+        <exec executable="${sdk.dir}/build-tools/33.0.2/aapt" failonerror="true">
+            <arg value="package" />
+            <arg value="-m" />
+            <arg value="-J" />
+            <arg value="${gen.dir}" />
+            <arg value="-M" />
+            <arg value="AndroidManifest.xml" />
+            <arg value="-S" />
+            <arg value="${res.dir}" />
+            <arg value="-I" />
+            <arg value="${sdk.dir}/platforms/${target}/android.jar" />
+        </exec>
+    </target>
+
+    <target name="compile" depends="init">
+        <echo>Compiling source files...</echo>
+        <javac destdir="${classes.dir}" includeantruntime="false" debug="true">
+            <src path="${source.dir}" />
+            <src path="${gen.dir}" />
+            <classpath refid="project.classpath" />
         </javac>
     </target>
 
-
-
-    <target name="help">
-        <echo>Android Ant Build File for GitHub Actions</echo>
-        <echo>Usage: ant compile</echo>
+    <target name="clean">
+        <delete dir="${out.dir}" />
+        <delete dir="${gen.dir}" />
     </target>
 </project>
