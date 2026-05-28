@@ -20,9 +20,22 @@ jobs:
       - name: Install Ant
         run: sudo apt-get update && sudo apt-get install -y ant
 
-      - name: Check Project Files
+      - name: Create Minimal build.xml
         run: |
-          java -version
-          javac -version
-          ant -version
-          ls -R
+          cat > build.xml <<EOF
+          <project name="piet-droid" default="compile">
+              <target name="compile">
+                  <mkdir dir="bin"/>
+                  <javac srcdir="src" destdir="bin" includeantruntime="false"/>
+              </target>
+          </project>
+          EOF
+
+      - name: Compile Java Sources
+        run: ant compile
+
+      - name: Upload Compiled Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: piet-droid-bin
+          path: bin/
