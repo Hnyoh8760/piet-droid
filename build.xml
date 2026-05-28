@@ -15,14 +15,16 @@
     <target name="compile">
         <mkdir dir="${classes.dir}" />
         <javac srcdir="${source.dir}" destdir="${classes.dir}" includeantruntime="false">
-            <compilerarg value="-Xbootclasspath/p:${sdk.dir}/platforms/${target}/android.jar"/>
             <classpath>
+                <pathelement location="${sdk.dir}/platforms/${target}/android.jar"/>
+                
                 <fileset dir="libs">
                     <include name="*.jar" />
                 </fileset>
             </classpath>
         </javac>
     </target>
+
 
 
     <target name="help">
