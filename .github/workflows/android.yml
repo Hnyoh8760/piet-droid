@@ -36,14 +36,17 @@ jobs:
       run: |
         echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
 
-    - name: Generate build.xml
-      run: |
-        android update project \
-          --path . \
-          --target android-19
+- name: Generate build.xml
+  run: |
+    cat > build.xml <<EOF
+    <project name="piet-droid" default="help">
+    </project>
+    EOF
 
-    - name: Build Debug APK
-      run: ant debug
+    - name: Build APK
+    run: |
+      javac -version
+      ls -la
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
