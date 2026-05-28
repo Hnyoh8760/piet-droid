@@ -1,41 +1,45 @@
-name: Build Piet Droid APK
+name: Android Ant Build
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    # ၁။ Code တွေကို GitHub runner ဆီ ဆွဲယူခြင်း
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+    # ၂။ Java Runtime (JDK 17) ကို သတ်မှတ်ခြင်း
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'ant' # Ant dependencies တွေကို cache လုပ်ပြီး build မြန်စေရန်
 
-      - name: Install Ant
-        run: sudo apt-get update && sudo apt-get install -y ant
+    # ၃။ Android SDK ကို တင်သွင်းခြင်း
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
 
-      - name: Create Minimal build.xml
-        run: |
-          cat > build.xml <<EOF
-          <project name="piet-droid" default="compile">
-              <target name="compile">
-                  <mkdir dir="bin"/>
-                  <javac srcdir="src" destdir="bin" includeantruntime="false"/>
-              </target>
-          </project>
-          EOF
+    # ၄။ ပရောဂျက်အတွက် လိုအပ်တဲ့ Android SDK Platform ကို install လုပ်ခြင်း
+    # (မှတ်ချက် - မင်းရဲ့ project က သုံးထားတဲ့ Android version အလိုက် 'platforms;android-33' နေရာမှာ ပြောင်းလဲနိုင်ပါတယ်)
+    - name: Install Android Platform Component
+      run: |
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-      - name: Compile Java Sources
-        run: ant compile
+    # ၅။ Apache Ant ကို Runner ထဲသွင်းခြင်း
+    - name: Setup Ant
+      run: sudo apt-get update && sudo apt-get install -y ant
 
-      - name: Upload Compiled Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: piet-droid-bin
-          path: bin/
+    # ၆။ Ant compile ကို run ခြင်း (လိုအပ်တဲ့ environment variable များပါဝင်သည်)
+    - name: Run ant compile
+      run: ant compile
+      env:
+        JAVA_HOME: ${{ env.JAVA_HOME }}
+        ANDROID_HOME: ${{ env.ANDROID_HOME }}
