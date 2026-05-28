@@ -8,48 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: 17
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-    - name: Install Android SDK
-      uses: android-actions/setup-android@v3
-
-    - name: Install Ant
-      run: sudo apt-get update && sudo apt-get install -y ant
-
-    - name: Accept SDK Licenses
-      run: yes | sdkmanager --licenses
-
-    - name: Install Android Platform
-      run: |
-        sdkmanager "platform-tools"
-        sdkmanager "platforms;android-19"
-        sdkmanager "build-tools;30.0.3"
-
-    - name: Generate local.properties
-      run: |
-        echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-
-- name: Generate build.xml
-  run: |
-    cat > build.xml <<EOF
-    <project name="piet-droid" default="help">
-    </project>
-    EOF
-
-    - name: Build APK
-    run: |
-      javac -version
-      ls -la
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: piet-droid-apk
-        path: bin/*.apk
+      - name: Check Files
+        run: |
+          java -version
+          javac -version
+          ls -la
