@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="piet-droid" default="help">
+
+    <property file="local.properties" />
+    <property environment="env" />
+    <condition property="sdk.dir" value="${env.ANDROID_HOME}">
+        <isset property="env.ANDROID_HOME" />
+    </condition>
+
+    <property name="target" value="android-33" />
+    <property name="source.dir" value="src" />
+    <property name="out.dir" value="bin" />
+    <property name="classes.dir" value="${out.dir}" />
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}" />
+        <javac srcdir="${source.dir}" destdir="${classes.dir}" includeantruntime="false" bootclasspath="${sdk.dir}/platforms/${target}/android.jar">
+            <classpath>
+                <fileset dir="libs">
+                    <include name="*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="help">
+        <echo>Android Ant Build File for GitHub Actions</echo>
+        <echo>Usage: ant compile</echo>
+    </target>
+</project>
