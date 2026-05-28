@@ -14,7 +14,8 @@
 
     <target name="compile">
         <mkdir dir="${classes.dir}" />
-        <javac srcdir="${source.dir}" destdir="${classes.dir}" includeantruntime="false" bootclasspath="${sdk.dir}/platforms/${target}/android.jar">
+        <javac srcdir="${source.dir}" destdir="${classes.dir}" includeantruntime="false">
+            <compilerarg value="-Xbootclasspath/p:${sdk.dir}/platforms/${target}/android.jar"/>
             <classpath>
                 <fileset dir="libs">
                     <include name="*.jar" />
@@ -22,6 +23,7 @@
             </classpath>
         </javac>
     </target>
+
 
     <target name="help">
         <echo>Android Ant Build File for GitHub Actions</echo>
