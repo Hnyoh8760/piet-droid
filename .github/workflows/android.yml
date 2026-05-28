@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: 'ant' # Ant dependencies တွေကို cache လုပ်ပြီး build မြန်စေရန်
+        #cache: 'ant' # Ant dependencies တွေကို cache လုပ်ပြီး build မြန်စေရန်
 
     # ၃။ Android SDK ကို တင်သွင်းခြင်း
     - name: Setup Android SDK
