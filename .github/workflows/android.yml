@@ -21,14 +21,13 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        #cache: 'ant' # Ant dependencies တွေကို cache လုပ်ပြီး build မြန်စေရန်
 
     # ၃။ Android SDK ကို တင်သွင်းခြင်း
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
 
     # ၄။ ပရောဂျက်အတွက် လိုအပ်တဲ့ Android SDK Platform ကို install လုပ်ခြင်း
-    # (မှတ်ချက် - မင်းရဲ့ project က သုံးထားတဲ့ Android version အလိုက် 'platforms;android-33' နေရာမှာ ပြောင်းလဲနိုင်ပါတယ်)
+    # (မှတ်ချက် - မင်းရဲ့ project properties အလိုက် target version ကို ပြောင်းလဲနိုင်ပါတယ်)
     - name: Install Android Platform Component
       run: |
         sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
@@ -37,7 +36,12 @@ jobs:
     - name: Setup Ant
       run: sudo apt-get update && sudo apt-get install -y ant
 
-    # ၆။ Ant compile ကို run ခြင်း (လိုအပ်တဲ့ environment variable များပါဝင်သည်)
+    # ၆။ မရှိသေးတဲ့ build.xml ကို အလိုအလျောက် Generate ပြုလုပ်ခြင်း
+    - name: Generate build.xml
+      run: |
+        $ANDROID_HOME/tools/android update project --path . --target android-33
+
+    # ၇။ Ant compile ကို run ခြင်း
     - name: Run ant compile
       run: ant compile
       env:
