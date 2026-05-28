@@ -1,1 +1,33 @@
-I change
+name: Android Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
+
+    - name: Install Ant
+      run: sudo apt-get update && sudo apt-get install -y ant
+
+    - name: Generate build.xml
+      run: |
+        if [ ! -f build.xml ]; then
+          echo "build.xml missing"
+        fi
+
+    - name: List files
+      run: ls -la
+
+    - name: Build APK
+      run: ant debug
